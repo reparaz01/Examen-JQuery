@@ -39,7 +39,6 @@
                                 Series
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarSeriesDropdownMenuLink">
-                                <!-- Los elementos del menú de series se cargarán dinámicamente aquí -->
                             </ul>
                         </li>
                     </ul>
@@ -48,7 +47,6 @@
         </nav>
     </div>
 
-    <!-- Contenido de la serie -->
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -117,7 +115,6 @@
                     method: 'GET',
                     success: function(data) {
                         var dropdownMenu = $('#navbarSeriesDropdownMenuLink').next('.dropdown-menu');
-                        // Recorre los datos y crea los elementos del menú de series
                         data.forEach(function(serie) {
                             dropdownMenu.append(
                                 '<li><a class="dropdown-item" href="serie.html?idSerie=' + serie.idSerie + '">' + serie.nombre + '</a></li>'
