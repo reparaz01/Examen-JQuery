@@ -87,7 +87,7 @@
             $('#crearPersonaje').on('click', function() {
                 var nombre = $('#nombre').val();
                 var imagen = $('#imagen').val();
-                var serieId = $('#serie').val();
+                var serieId = parseInt($('#serie').val());
 
 
                 var url = urlApi + "api/personajes";
@@ -96,7 +96,7 @@
                     idPersonaje : 0,
                     nombre: nombre,
                     imagen: imagen,
-                    serieId: serieId
+                    idSerie: serieId
                 };
 
                 console.log(personaje);
@@ -134,9 +134,6 @@
                             );
                         });
                     },
-                    error: function(error) {
-                        console.error('Error al cargar las series:', error);
-                    }
                 });
             }
 
@@ -156,9 +153,6 @@
                             );
                         });
                     },
-                    error: function(error) {
-                        console.error('Error al cargar las series:', error);
-                    }
                 });
             }
 
