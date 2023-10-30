@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personajes de la Serie</title>
+    <link href="../css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <div>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="../resources/logo.png" width="50" height="50" alt="Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html">
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class = "nav-link active" aria-current="page" href="crearpersonajes.html">
+                                Crear Personaje
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="modificarpersonajes.html">
+                                Modificar Personajes
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarSeriesDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Series
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarSeriesDropdownMenuLink" id="seriesMenu">
+                                <!-- Los elementos del menú de series se cargarán dinámicamente aquí -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container py-4">
+        <h2 class="mb-3">Personajes de la Serie: <span id="nombreSerie"></span> &nbsp; 
+            <a href="#" id="volverButton" class="btn btn-success">Volver</a>
+        </h2>
+        <table class="table table-secondary table-bordered">
+            <thead>
+                <tr>
+                    <th class="align-middle text-center">Nombre</th>
+                    <th class="align-middle text-center">Foto</th>
+                </tr>
+            </thead>
+            <tbody id="personajes-table">
+                <!-- Los elementos de la tabla se generarán dinámicamente aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="../js/jquery-3.7.1.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+        var urlApi = "https://apiseriespersonajes.azurewebsites.net/";
+
+        $(document).ready(function() {
+            loadSeriesMenu();
+
+            var params = new URLSearchParams(window.location.search);
+            var idSerie = params.get('idSerie');
+            var nombreSerie = params.get('nombreSerie');
+
+            $('#nombreSerie').text(nombreSerie);
+            var serieUrl = 'serie.html?idSerie=' + idSerie;
+            $('#volverButton').attr('href', serieUrl);
+
+            loadPersonajes(idSerie);
+
+            function loadPersonajes(idSerie) {
+                var request = 'api/personajes';
+                var url = urlApi + request;
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(data) {
+                        var tbody = $('#personajes-table');
+                        tbody.empty();
+
+                        var personajesDeSerie = [];
+
+                        $.each(data, function(index, personaje) {
+                            if (personaje.idSerie == idSerie) {
+                                personajesDeSerie.push(personaje);
+                            }
+                        });
+
+                        $.each(personajesDeSerie, function(index, personaje) {
+                            var row = '<tr>';
+                            row += '<td class="align-middle text-center">' + personaje.nombre + '</td>';
+                            row += '<td class="align-middle text-center"><img src="' + personaje.imagen + '" alt="' + personaje.nombre + '" style="max-width: 100px;"></td>';
+                            row += '</tr>';
+                            tbody.append(row);
+                        });
+                    },
+                    error: function(error) {
+                        console.error('Error al cargar los personajes:', error);
+                    }
+                });
+            }
+
+            function loadSeriesMenu() {
+                request = 'api/series';
+                var url = urlApi + request;
+                console.log(url);
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(data) {
+                        var dropdownMenu = $('#seriesMenu');
+                        // Recorre los datos y crea los elementos del menú de series
+                        $.each(data, function(index, serie) {
+                            dropdownMenu.append(
+                                '<li><a class="dropdown-item" href="serie.html?idSerie=' + serie.idSerie + '&nombreSerie=' + serie.nombre + '">' + serie.nombre + '</a></li>'
+                            );
+                        });
+                    },
+                    error: function(error) {
+                        console.error('Error al cargar las series:', error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
